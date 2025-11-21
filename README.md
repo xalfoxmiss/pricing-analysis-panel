@@ -370,7 +370,7 @@ Este proyecto es de código abierto bajo licencia MIT.
 - 🔗 **Website**: https://www.alfonsocalero.es/
 - 📧 **Email**: Disponible en web
 - 🐙 **GitHub**: @xalfoxmiss
-- 💼 **LinkedIn**: [Perfil](https://linkedin.com/in/alfonsocalero)
+- 💼 **LinkedIn**: [Perfil](https://www.linkedin.com/in/alfonsocalerogijon/)
 
 ---
 
@@ -388,4 +388,4 @@ streamlit run app.py
 
 ---
 
-*Última actualización: Noviembre 2024*
+*Última actualización: 21 noviembre de 2025*
