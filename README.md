@@ -21,12 +21,12 @@ Panel web automatizado para análisis de competitividad de precios a partir de d
 
 ## 🛠️ Stack Tecnológico
 
-- **Streamlit 1.29.0** - Framework web para paneles interactivos
-- **Pandas 2.0.3** - Análisis y manipulación de datos
-- **Plotly 5.17.0** - Visualizaciones interactivas
-- **lxml 4.9.3** - Parser de XML con soporte de namespaces
+- **Streamlit 1.40.0** - Framework web para paneles interactivos
+- **Pandas 2.2.3** - Análisis y manipulación de datos
+- **Plotly 5.24.1** - Visualizaciones interactivas
+- **lxml 5.3.0** - Parser de XML con soporte de namespaces
 - **Bootstrap 5** - UI responsiva y componentes modernos
-- **Python 3.8+** - Lenguaje principal
+- **Python 3.8+** - Lenguaje principal (compatible hasta Python 3.13+)
 
 ## 📋 Requisitos
 
