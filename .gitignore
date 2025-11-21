@@ -147,6 +147,9 @@ precios.csv
 feed.xml
 informe_*.html
 
+# Reports folder - generated HTML reports
+reports/
+
 # Logs
 *.log
 
