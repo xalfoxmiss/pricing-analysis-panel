@@ -137,6 +137,9 @@ cython_debug/
 # VS Code
 .vscode/
 
+# Claude settings
+.claude/
+
 # Streamlit
 .streamlit/
 

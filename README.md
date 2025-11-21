@@ -6,11 +6,11 @@ Panel web automatizado para análisis de competitividad de precios a partir de d
 
 ### 📈 **Análisis Multi-Dimensional**
 - **Marcas**: Análisis de competitividad por fabricante
-- **Medidas**: Desglose por dimensiones de producto (ej: 205/55 R16)
-- **Modelos**: Análisis por modelos específicos
-- **Temporadas**: Segmentación por temporada del producto
-- **Vehículos**: Tipos de vehículo (4x4, turismo, etc.)
-- **Calidad**: Segmentos de calidad premium/estándar
+- **Categorías**: Desglose por categorías de productos del feed
+- **Atributos**: Análisis por atributos específicos de `g:product_detail`
+- **Labels**: Segmentación por `g:custom_label_0-4`
+- **Temporadas**: Productos por temporadas o estacionalidad
+- **Calidad**: Segmentos por calidad o categorías personalizadas
 
 ### 🔧 **Características Técnicas**
 - **Parser XML Avanzado**: Compatible con feeds Google Shopping con namespace `g:*`
@@ -133,9 +133,9 @@ pricing-analysis-panel/
 ### Extracción de Datos XML
 El parser extrae automáticamente:
 - **Campos estándar**: `g:id`, `g:title`, `g:price`, `g:brand`
-- **Detalles de producto**: `g:product_detail` con sección y atributo
-- **Labels personalizados**: `g:custom_label_0-4`
-- **Dimensiones**: `g:dimensions`, `g:pattern`
+- **Detalles de producto**: `g:product_detail` con sección y atributo personalizado
+- **Labels personalizados**: `g:custom_label_0-4` para segmentos personalizados
+- **Dimensiones**: `g:dimensions`, `g:pattern` para categorías específicas
 
 ### Métricas Calculadas
 - **Diferencia de precio**: Porcentaje vs competencia
@@ -146,7 +146,8 @@ El parser extrae automáticamente:
 ### Reportes Generados
 - **Resumen Ejecutivo**: KPIs principales y tendencias
 - **Análisis por Marca**: Competitividad por fabricante
-- **Análisis por Categoría**: Desglose por medidas/modelos/temporadas
+- **Análisis por Categorías**: Desglose por categorías del feed y atributos
+- **Análisis por Labels**: Segmentación por custom_labels
 - **Top Products**: Ranking de productos por rendimiento
 - **Recomendaciones**: Acciones sugeridas por prioridad
 
