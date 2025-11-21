@@ -262,6 +262,35 @@ class PricingAnalyzer:
         print(f"Columna ID no detectada, usando primera columna: '{first_col}'")
         return first_col
 
+    def _detect_merge_id_column(self, df: pd.DataFrame) -> str:
+        """
+        Detecta la columna que indica si un producto tiene match del feed
+        Busca columnas que puedan indicar datos provenientes del feed
+        """
+        # Columnas que indican match con feed (con sufijos del merge)
+        feed_columns = []
+        for col in df.columns:
+            if col.endswith('_feed'):
+                feed_columns.append(col)
+
+        # Columnas comunes que pueden indicar match
+        id_columns = [
+            'product_id', 'id_producto', 'product_id_feed', 'title_feed', 'Título'
+        ]
+
+        # Buscar columnas exactas
+        for col in df.columns:
+            for id_col in id_columns:
+                if col.lower().strip() == id_col.lower().strip():
+                    return col
+
+        # Usar columnas con sufijo _feed
+        if feed_columns:
+            return feed_columns[0]
+
+        # Si no se encuentra nada, devolver None
+        return None
+
     def calculate_metrics(self) -> Dict:
         """
         Calcula métricas clave de pricing
@@ -440,15 +469,36 @@ class PricingAnalyzer:
         opportunity_products = df[(df['price_diff_pct'] < 0) & (df['Clics'] > clicks_threshold)]
         opportunity_products = opportunity_products.nlargest(20, ['Clics', 'price_diff_pct'])
 
-        # Calidad de datos
+        # Calidad de datos - manejar diferentes nombres de columnas de ID
+        id_column = self._detect_merge_id_column(df)
+
+        if id_column and id_column in df.columns:
+            productos_con_match = len(df[df[id_column].notna()])
+            productos_sin_match = len(df[df[id_column].isna()])
+            porcentaje_match = productos_con_match / len(self.competitiveness_data) * 100 if len(self.competitiveness_data) > 0 else 0
+
+            # Calcular clics solo si existe la columna Clics
+            if 'Clics' in df.columns:
+                clics_con_match = df[df[id_column].notna()]['Clics'].sum()
+                clics_sin_match = df[df[id_column].isna()]['Clics'].sum()
+            else:
+                clics_con_match = 0
+                clics_sin_match = 0
+        else:
+            productos_con_match = len(df)
+            productos_sin_match = 0
+            porcentaje_match = 100.0
+            clics_con_match = df['Clics'].sum() if 'Clics' in df.columns else 0
+            clics_sin_match = 0
+
         data_quality = {
             'total_productos_csv': len(self.competitiveness_data),
             'total_productos_feed': len(self.feed_data),
-            'productos_con_match': len(df[df['product_id'].notna()]),
-            'productos_sin_match': len(df[df['product_id'].isna()]),
-            'porcentaje_match': len(df[df['product_id'].notna()]) / len(self.competitiveness_data) * 100,
-            'clics_con_match': df[df['product_id'].notna()]['Clics'].sum(),
-            'clics_sin_match': df[df['product_id'].isna()]['Clics'].sum()
+            'productos_con_match': productos_con_match,
+            'productos_sin_match': productos_sin_match,
+            'porcentaje_match': porcentaje_match,
+            'clics_con_match': clics_con_match,
+            'clics_sin_match': clics_sin_match
         }
 
         return {
