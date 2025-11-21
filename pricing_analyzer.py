@@ -334,8 +334,11 @@ class PricingAnalyzer:
                     'segmentos': brand_segment_pct.to_dict()
                 })
 
-        # Convertir a DataFrame y ordenar
-        brand_df = pd.DataFrame(brand_metrics).sort_values('clics_totales', ascending=False)
+        # Convertir a DataFrame y ordenar - verificar que hay datos
+        if brand_metrics:
+            brand_df = pd.DataFrame(brand_metrics).sort_values('clics_totales', ascending=False)
+        else:
+            brand_df = pd.DataFrame(columns=['marca', 'clics_totales', 'productos', 'price_diff_media_simple', 'price_diff_media_ponderada', 'segmentos'])
 
         # Análisis por categoría si existe
         category_metrics = None
@@ -353,7 +356,7 @@ class PricingAnalyzer:
                         'price_diff_media_ponderada': (cat_data['price_diff_pct'] * cat_data['Clics']).sum() / cat_clicks
                     })
 
-            category_df = pd.DataFrame(category_metrics).sort_values('clics_totales', ascending=False)
+            category_df = pd.DataFrame(category_metrics).sort_values('clics_totales', ascending=False) if category_metrics else pd.DataFrame(columns=['categoria', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             category_df = None
 
@@ -373,7 +376,7 @@ class PricingAnalyzer:
                             'price_diff_media_ponderada': (medida_data['price_diff_pct'] * medida_data['Clics']).sum() / medida_clicks
                         })
 
-            medida_df = pd.DataFrame(medida_metrics).sort_values('clics_totales', ascending=False)
+            medida_df = pd.DataFrame(medida_metrics).sort_values('clics_totales', ascending=False) if medida_metrics else pd.DataFrame(columns=['medida', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             medida_df = None
 
@@ -393,7 +396,7 @@ class PricingAnalyzer:
                             'price_diff_media_ponderada': (modelo_data['price_diff_pct'] * modelo_data['Clics']).sum() / modelo_clicks
                         })
 
-            modelo_df = pd.DataFrame(modelo_metrics).sort_values('clics_totales', ascending=False)
+            modelo_df = pd.DataFrame(modelo_metrics).sort_values('clics_totales', ascending=False) if modelo_metrics else pd.DataFrame(columns=['modelo', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             modelo_df = None
 
@@ -413,7 +416,7 @@ class PricingAnalyzer:
                             'price_diff_media_ponderada': (temporada_data['price_diff_pct'] * temporada_data['Clics']).sum() / temporada_clicks
                         })
 
-            temporada_df = pd.DataFrame(temporada_metrics).sort_values('clics_totales', ascending=False)
+            temporada_df = pd.DataFrame(temporada_metrics).sort_values('clics_totales', ascending=False) if temporada_metrics else pd.DataFrame(columns=['temporada', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             temporada_df = None
 
@@ -433,7 +436,7 @@ class PricingAnalyzer:
                             'price_diff_media_ponderada': (vehiculo_data['price_diff_pct'] * vehiculo_data['Clics']).sum() / vehiculo_clicks
                         })
 
-            vehiculo_df = pd.DataFrame(vehiculo_metrics).sort_values('clics_totales', ascending=False)
+            vehiculo_df = pd.DataFrame(vehiculo_metrics).sort_values('clics_totales', ascending=False) if vehiculo_metrics else pd.DataFrame(columns=['vehiculo', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             vehiculo_df = None
 
@@ -453,7 +456,7 @@ class PricingAnalyzer:
                             'price_diff_media_ponderada': (quality_data['price_diff_pct'] * quality_data['Clics']).sum() / quality_clicks
                         })
 
-            quality_df = pd.DataFrame(quality_metrics).sort_values('clics_totales', ascending=False)
+            quality_df = pd.DataFrame(quality_metrics).sort_values('clics_totales', ascending=False) if quality_metrics else pd.DataFrame(columns=['quality', 'clics_totales', 'productos', 'price_diff_media_ponderada'])
         else:
             quality_df = None
 
