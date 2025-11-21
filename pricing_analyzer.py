@@ -124,23 +124,23 @@ class PricingAnalyzer:
         df = pd.DataFrame(products)
 
         # Estandarizar marcas
-        df['brand_standardized'] = df['brand'].str.strip().str.upper() if 'brand' in df.columns else None
+        df['brand_standardized'] = df['brand'].astype(str).str.strip().str.upper() if 'brand' in df.columns else None
 
         # Estandarizar categorías adicionales
         if 'section_general_medida' in df.columns:
-            df['medida_limpia'] = df['section_general_medida'].str.strip().str.upper()
+            df['medida_limpia'] = df['section_general_medida'].astype(str).str.strip().str.upper()
         if 'section_general_modelo' in df.columns:
-            df['modelo_limpio'] = df['section_general_modelo'].str.strip().str.upper()
+            df['modelo_limpio'] = df['section_general_modelo'].astype(str).str.strip().str.upper()
         if 'section_general_temporada' in df.columns:
-            df['temporada_limpia'] = df['section_general_temporada'].str.strip().str.title()
+            df['temporada_limpia'] = df['section_general_temporada'].astype(str).str.strip().str.title()
         if 'section_general_vehículo' in df.columns:
-            df['vehiculo_limpio'] = df['section_general_vehículo'].str.strip().str.title()
+            df['vehiculo_limpio'] = df['section_general_vehículo'].astype(str).str.strip().str.title()
         if 'custom_label_2' in df.columns:
-            df['vehiculo_custom'] = df['custom_label_2'].str.strip().str.title()
+            df['vehiculo_custom'] = df['custom_label_2'].astype(str).str.strip().str.title()
         if 'custom_label_3' in df.columns:
-            df['segmento_quality'] = df['custom_label_3'].str.strip().str.upper()
+            df['segmento_quality'] = df['custom_label_3'].astype(str).str.strip().str.upper()
         if 'dimensions' in df.columns:
-            df['medida_dimensions'] = df['dimensions'].str.strip().str.upper()
+            df['medida_dimensions'] = df['dimensions'].astype(str).str.strip().str.upper()
 
         # Unificar medidas de diferentes fuentes
         if 'medida_limpia' in df.columns and 'medida_dimensions' in df.columns:
@@ -196,8 +196,8 @@ class PricingAnalyzer:
         # Limpiar columna temporal
         merged.drop(columns=['_merge_key'], inplace=True)
 
-        # Estandarizar marcas
-        merged['marca_final'] = merged['Marca'].str.strip().str.upper()
+        # Estandarizar marcas - manejar valores no string
+        merged['marca_final'] = merged['Marca'].astype(str).str.strip().str.upper()
 
         # Métricas adicionales
         merged['impacto_clicks'] = merged['Clics'] * abs(merged['price_diff_pct'])
