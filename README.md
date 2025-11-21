@@ -95,11 +95,16 @@ docker-compose up
 
 ### 1. Subida de Archivos
 - **Archivo A**: CSV de competitividad de Google Merchant Center
-  - Columnas requeridas: `SKU`, `Clics`, `Impresiones`, `Precio`
-  - Formato: UTF-8, separador coma
+  - **Columnas detectadas automáticamente**: ID, SKU, Código, Referencia
+  - **Columnas opcionales**: Clics, Impresiones, Precio, Marca
+  - **Formato**: UTF-8, separador coma o punto y coma
+  - **Fuentes compatibles**: Google Merchant Center, sistemas ERP, exportaciones custom
+
 - **Archivo B**: XML feed de productos Google Shopping
-  - Namespace: `http://base.google.com/ns/1.0`
-  - Campos soportados: `g:price`, `g:brand`, `g:product_detail`
+  - **Namespace**: `http://base.google.com/ns/1.0` (automático)
+  - **Campo ID detectado**: `g:id`, `product_id`, `sku`, `item_id`
+  - **Campos soportados**: `g:price`, `g:brand`, `g:product_detail`, `g:custom_label_*`
+  - **Formatos compatibles**: Google Shopping feeds XML/Atom, feeds personalizados
 
 ### 2. Procesamiento Automático
 - Click en **"GENERAR INFORME"**
@@ -258,8 +263,18 @@ def generate_report(self, metrics, data):
 
 #### "File not found"
 - **Solución**: Verificar formatos CSV/XML y permisos de archivos
-- **CSV debe tener**: Headers correctos, formato UTF-8
-- **XML debe tener**: Namespace `http://base.google.com/ns/1.0`
+- **CSV**: Headers correctos, formato UTF-8, codificación consistente
+- **XML**: Namespace detectado automáticamente, estructura RSS/Atom válida
+
+#### "No matching column found" o "Merge error"
+- **Solución**: El sistema detecta automáticamente columnas de ID
+- **IDs compatibles**: ID, SKU, product_id, item_id, código, referencia
+- **Tip**: Usa nombres consistentes entre CSV y XML
+
+#### "ValueError: cannot merge"
+- **Solución**: Convertido automáticamente en nueva versión
+- **Sistema estandariza**: Todos los tipos a string para comparación
+- **Reportado**: Muestra qué columnas detectó y usó para merge
 
 #### "Memory limit exceeded"
 - **Solución**: Optimizar para datasets grandes

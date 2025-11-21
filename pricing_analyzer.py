@@ -165,18 +165,36 @@ class PricingAnalyzer:
     def enrich_data(self) -> pd.DataFrame:
         """
         Enriquece los datos de competitividad con información del feed
+        Compatible con múltiples formatos de feeds
         """
         if self.competitiveness_data is None or self.feed_data is None:
             raise ValueError("Debes cargar ambos datasets antes de enriquecer")
 
-        # Merge por ID de producto
-        merged = self.competitiveness_data.merge(
-            self.feed_data,
-            left_on='ID de producto',
-            right_on='product_id',
+        # Detectar columnas de ID en ambos datasets
+        comp_id_col = self._detect_id_column(self.competitiveness_data)
+        feed_id_col = self._detect_id_column(self.feed_data)
+
+        print(f"Columnas de ID detectadas: CSV='{comp_id_col}', Feed='{feed_id_col}'")
+
+        # Preparar datos para merge robusto
+        comp_data = self.competitiveness_data.copy()
+        feed_data = self.feed_data.copy()
+
+        # Convertir IDs a string para comparación
+        comp_data['_merge_key'] = comp_data[comp_id_col].astype(str).str.strip().str.upper()
+        feed_data['_merge_key'] = feed_data[feed_id_col].astype(str).str.strip().str.upper()
+
+        # Merge usando claves estandarizadas
+        merged = comp_data.merge(
+            feed_data.drop(columns=[feed_id_col]),  # Eliminar columna original del feed
+            left_on='_merge_key',
+            right_on='_merge_key',
             how='left',
             suffixes=('_merchant', '_feed')
         )
+
+        # Limpiar columna temporal
+        merged.drop(columns=['_merge_key'], inplace=True)
 
         # Estandarizar marcas
         merged['marca_final'] = merged['Marca'].str.strip().str.upper()
@@ -189,11 +207,50 @@ class PricingAnalyzer:
         print(f"Datos enriquecidos: {len(merged)} productos con match")
 
         # Reportar calidad de datos
-        unmatched = len(merged[merged['product_id'].isna()])
+        if 'product_id_feed' in merged.columns:
+            unmatched = len(merged[merged['product_id_feed'].isna()])
+        else:
+            unmatched = len(merged[merged['title_feed'].isna()])
+
         total = len(self.competitiveness_data)
         print(f"Productos sin match en feed: {unmatched}/{total} ({unmatched/total*100:.1f}%)")
 
         return merged
+
+    def _detect_id_column(self, df: pd.DataFrame) -> str:
+        """
+        Detecta automáticamente la columna de ID en el dataframe
+        Compatible con múltiples formatos de feeds
+        """
+        # Lista de posibles nombres de columnas de ID
+        id_columns = [
+            'id', 'ID', 'product_id', 'product-id', 'productId',
+            'sku', 'SKU', 'item_id', 'item-id', 'itemId',
+            'ID de producto', 'ID producto', 'product code',
+            'g:id', 'identifier', 'reference', 'ref'
+        ]
+
+        # Buscar columnas exactas
+        for col in df.columns:
+            for id_col in id_columns:
+                if col.lower().strip() == id_col.lower().strip():
+                    print(f"Columna ID detectada: '{col}'")
+                    return col
+
+        # Buscar columnas que contienen palabras clave
+        for col in df.columns:
+            col_lower = col.lower().strip()
+            if any(keyword in col_lower for keyword in ['id', 'sku', 'codigo', 'code', 'ref']):
+                # Verificar que tenga datos únicos (característica de ID)
+                unique_ratio = df[col].nunique() / len(df[col])
+                if unique_ratio > 0.8:  # Muy probable que sea un ID
+                    print(f"Columna ID detectada por patrón: '{col}' (ratio: {unique_ratio:.2f})")
+                    return col
+
+        # Si no se encuentra, usar la primera columna
+        first_col = df.columns[0]
+        print(f"Columna ID no detectada, usando primera columna: '{first_col}'")
+        return first_col
 
     def calculate_metrics(self) -> Dict:
         """
