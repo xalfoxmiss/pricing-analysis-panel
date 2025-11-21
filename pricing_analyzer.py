@@ -197,20 +197,30 @@ class PricingAnalyzer:
         merged.drop(columns=['_merge_key'], inplace=True)
 
         # Estandarizar marcas - manejar valores no string
-        merged['marca_final'] = merged['Marca'].astype(str).str.strip().str.upper()
+        if 'Marca' in merged.columns:
+            merged['marca_final'] = merged['Marca'].astype(str).str.strip().str.upper()
+        else:
+            print("Columna 'Marca' no encontrada en los datos fusionados")
 
-        # Métricas adicionales
-        merged['impacto_clicks'] = merged['Clics'] * abs(merged['price_diff_pct'])
-        merged['precio_ajustado'] = merged['Tu precio'] * (1 + merged['Diferencia de precios'])
+        # Métricas adicionales - solo si existen las columnas necesarias
+        if all(col in merged.columns for col in ['Clics', 'price_diff_pct']):
+            merged['impacto_clicks'] = merged['Clics'] * abs(merged['price_diff_pct'])
+        if all(col in merged.columns for col in ['Tu precio', 'Diferencia de precios']):
+            merged['precio_ajustado'] = merged['Tu precio'] * (1 + merged['Diferencia de precios'])
 
         self.enriched_data = merged
         print(f"Datos enriquecidos: {len(merged)} productos con match")
 
         # Reportar calidad de datos
+        unmatched = 0
         if 'product_id_feed' in merged.columns:
             unmatched = len(merged[merged['product_id_feed'].isna()])
-        else:
+        elif 'title_feed' in merged.columns:
             unmatched = len(merged[merged['title_feed'].isna()])
+        elif 'Título' in merged.columns:
+            unmatched = len(merged[merged['Título'].isna()])
+        else:
+            print("No se encontraron columnas de referencia del feed para contar unmatched")
 
         total = len(self.competitiveness_data)
         print(f"Productos sin match en feed: {unmatched}/{total} ({unmatched/total*100:.1f}%)")
