@@ -543,18 +543,25 @@ class ReportGenerator:
 
         rows = []
         for _, brand in brands_df.head(20).iterrows():  # Top 20 marcas
-            segments = brand['segmentos'] if isinstance(brand['segmentos'], dict) else {}
+            # Manejar valores nulos con defaults seguros
+            marca = brand.get('marca', 'N/A')
+            clics_totales = int(brand.get('clics_totales', 0) or 0)
+            productos = int(brand.get('productos', 0) or 0)
+            price_diff_simple = float(brand.get('price_diff_media_simple', 0) or 0)
+            price_diff_ponderada = float(brand.get('price_diff_media_ponderada', 0) or 0)
+
+            segments = brand.get('segmentos') if isinstance(brand.get('segmentos'), dict) else {}
 
             row = f"""
                 <tr>
-                    <td><strong>{brand['marca']}</strong></td>
-                    <td>{brand['clics_totales']:,}</td>
-                    <td>{brand['productos']}</td>
-                    <td class="price-{self._get_price_class(brand['price_diff_media_simple'])}">
-                        {brand['price_diff_media_simple']:+.2f}%
+                    <td><strong>{marca}</strong></td>
+                    <td>{clics_totales:,}</td>
+                    <td>{productos}</td>
+                    <td class="price-{self._get_price_class(price_diff_simple)}">
+                        {price_diff_simple:+.2f}%
                     </td>
-                    <td class="price-{self._get_price_class(brand['price_diff_media_ponderada'])}">
-                        {brand['price_diff_media_ponderada']:+.2f}%
+                    <td class="price-{self._get_price_class(price_diff_ponderada)}">
+                        {price_diff_ponderada:+.2f}%
                     </td>
                     <td class="segment-muy-barato">{segments.get('MUCHO_MAS_BARATO', 0):.1f}%</td>
                     <td class="segment-barato">{segments.get('BARATO', 0):.1f}%</td>
@@ -570,7 +577,7 @@ class ReportGenerator:
     def _generate_top_products_rows(self, top_products: pd.DataFrame) -> str:
         """Genera filas HTML para tabla de top productos"""
         if top_products is None or len(top_products) == 0:
-            return '<tr><td colspan="10">No hay datos disponibles</td></tr>'
+            return '<tr><td colspan="14">No hay datos disponibles</td></tr>'
 
         rows = []
         for _, product in top_products.iterrows():
@@ -581,26 +588,31 @@ class ReportGenerator:
             temporada = product.get('temporada_limpia', 'N/A')
             vehiculo = product.get('vehiculo_final', 'N/A')
 
+            # Manejar valores nulos con defaults seguros
+            producto_id = product.get('ID de producto', 'N/A')
+            titulo = str(product.get('Título', 'N/A'))
+            marca = product.get('Marca', 'N/A')
+
             row = f"""
                 <tr>
-                    <td>{product['ID de producto']}</td>
-                    <td title="{product['Título']}">
-                        {product['Título'][:60]}{'...' if len(product['Título']) > 60 else ''}
+                    <td>{producto_id}</td>
+                    <td title="{titulo}">
+                        {titulo[:60]}{'...' if len(titulo) > 60 else ''}
                     </td>
-                    <td>{product['Marca']}</td>
+                    <td>{marca}</td>
                     <td>{product.get('category_inferred', 'N/A')}</td>
                     <td>{medida}</td>
                     <td>{temporada}</td>
                     <td>{vehiculo}</td>
-                    <td>{product['Tu precio']:.2f}€</td>
-                    <td>{product['Referencia']:.2f}€</td>
-                    <td class="price-{self._get_price_class(product['price_diff_pct'])}">
-                        {product['price_diff_pct']:+.2f}%
+                    <td>{float(product.get('Tu precio', 0) or 0):.2f}€</td>
+                    <td>{float(product.get('Referencia', 0) or 0):.2f}€</td>
+                    <td class="price-{self._get_price_class(float(product.get('price_diff_pct', 0) or 0)}">
+                        {float(product.get('price_diff_pct', 0) or 0):+.2f}%
                     </td>
-                    <td><span class="badge bg-{self._get_segment_color(product['segmento_precio'])}">
-                        {product['segmento_precio']}
+                    <td><span class="badge bg-{self._get_segment_color(product.get('segmento_precio', 'N/A'))}">
+                        {product.get('segmento_precio', 'N/A')}
                     </span></td>
-                    <td>{product['Clics']:,}</td>
+                    <td>{int(product.get('Clics', 0) or 0):,}</td>
                     <td><a href="{product_link}" target="_blank" class="btn btn-sm btn-outline-primary">
                         <i class="fas fa-external-link-alt"></i>
                     </a></td>
