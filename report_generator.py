@@ -606,7 +606,7 @@ class ReportGenerator:
                     <td>{vehiculo}</td>
                     <td>{float(product.get('Tu precio', 0) or 0):.2f}€</td>
                     <td>{float(product.get('Referencia', 0) or 0):.2f}€</td>
-                    <td class="price-{self._get_price_class(float(product.get('price_diff_pct', 0) or 0)}">
+                    <td class="price-{self._get_price_class(float(product.get('price_diff_pct', 0) or 0))}">
                         {float(product.get('price_diff_pct', 0) or 0):+.2f}%
                     </td>
                     <td><span class="badge bg-{self._get_segment_color(product.get('segmento_precio', 'N/A'))}">

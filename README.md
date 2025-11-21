@@ -36,44 +36,50 @@ Panel web automatizado para análisis de competitividad de precios a partir de d
 
 ## 🚀 Instalación y Ejecución
 
-### Opción 1: Ejecución Directa
+### Opción 1: Script Automatizado (Recomendado)
+```bash
+# Script de reparación e inicio automático
+fix_and_start.bat
+```
+Este script detecta automáticamente Python, repara instalaciones rotas de pip, e instala todas las dependencias necesarias.
+
+### Opción 2: Script Simple
+```bash
+# Script de inicio tradicional
+start_panel.bat
+```
+
+### Opción 3: Ejecución Manual
 ```bash
 # Clonar repositorio
 git clone https://github.com/xalfoxmiss/pricing-analysis-panel.git
 cd pricing-analysis-panel
 
-# Instalar dependencias
-pip install -r requirements.txt
+# Instalar dependencias con pip robusto
+python -m pip install -r requirements.txt
 
 # Ejecutar panel
-streamlit run app.py
+python -m streamlit run app.py --server.port 8502
 ```
 
-### Opción 2: Entorno Virtual (Recomendado)
+### Opción 4: Entorno Virtual
 ```bash
 # Crear entorno virtual
 python -m venv venv
 
-# Activar entorno
-# Windows
+# Activar entorno (Windows)
 venv\Scripts\activate
-# macOS/Linux
-source venv/bin/activate
 
 # Instalar dependencias
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 
 # Ejecutar panel
-streamlit run app.py
+python -m streamlit run app.py --server.port 8502
 ```
 
-### Opción 3: Script Automatizado
-```bash
-# Script con verificación automática de dependencias
-python run_panel.py
-```
+**Nota:** Se recomienda usar el puerto 8502 para evitar conflictos con procesos existentes.
 
-El panel estará disponible en http://localhost:8501
+El panel estará disponible en http://localhost:8502
 
 ## 🐳 Docker
 
@@ -124,14 +130,22 @@ pricing-analysis-panel/
 ├── app.py                    # Panel principal Streamlit (400+ líneas)
 ├── pricing_analyzer.py       # Motor de análisis de datos (500+ líneas)
 ├── report_generator.py       # Generador de informes HTML (600+ líneas)
-├── requirements.txt          # Dependencias Python
+├── requirements.txt          # Dependencias Python optimizadas
 ├── Dockerfile               # Configuración Docker
 ├── docker-compose.yml       # Orquestación Docker
-├── run_panel.py            # Script de ejecución local
+├── fix_and_start.bat        # Script reparador y de inicio (Recomendado)
+├── start_panel.bat          # Script simple de inicio
+├── run_panel.py            # Script de ejecución local alternativo
 ├── reports/                # Carpeta de informes generados (gitignore)
 ├── .gitignore              # Archivos excluidos del repo
 └── README.md               # Este archivo
 ```
+
+### Scripts de Ejecución
+
+- **`fix_and_start.bat`**: Script automático de reparación e inicio
+- **`start_panel.bat`**: Script simple de instalación y inicio
+- **`run_panel.py`**: Script Python para entornos virtuales
 
 ## 🎯 Análisis Detallado
 
@@ -261,6 +275,22 @@ def generate_report(self, metrics, data):
 
 ### Errores Comunes
 
+#### "Fatal error in launcher: Unable to create process using pip.exe"
+- **Causa**: Instalación de pip corrupta o mal configurada
+- **Solución**: Usar `fix_and_start.bat` que detecta Python y usa `python -m pip`
+```bash
+# Script automático de reparación
+fix_and_start.bat
+```
+
+#### "Puerto 8501 ocupado" o "Address already in use"
+- **Causa**: Procesos Streamlit previos corriendo
+- **Solución**: Scripts automáticos limpian procesos y usan puerto 8502
+- **Manual**: Cambiar a otro puerto:
+```bash
+python -m streamlit run app.py --server.port 8502
+```
+
 #### "File not found"
 - **Solución**: Verificar formatos CSV/XML y permisos de archivos
 - **CSV**: Headers correctos, formato UTF-8, codificación consistente
@@ -287,7 +317,7 @@ if len(df) > 10000:
 #### "Package not found"
 - **Solución**: Instalar dependencias correctas
 ```bash
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 python --version  # Verificar >= 3.8
 ```
 
@@ -297,6 +327,25 @@ python --version  # Verificar >= 3.8
 <!-- Verificar namespace correcto -->
 <rss xmlns:g="http://base.google.com/ns/1.0">
 ```
+
+### Scripts Disponibles
+
+#### `fix_and_start.bat` (Recomendado)
+- ✅ Detecta automáticamente instalación de Python
+- ✅ Repara pip corrupto usando `python -m pip`
+- ✅ Instala dependencias forzadas
+- ✅ Inicia en puerto 8502 sin conflictos
+
+#### `start_panel.bat`
+- ✅ Limpia procesos previos
+- ✅ Instala dependencias estándar
+- ✅ Inicia en puerto 8501
+
+### Compatibilidad Python
+- **Python 3.8+**: Soporte completo
+- **Python 3.10**: Compatible con dependencias actuales
+- **Python 3.11**: Recomendado para mejor rendimiento
+- **Python 3.13**: Compatible con versión actualizada de requirements.txt
 
 ### Optimización de Rendimiento
 
@@ -402,5 +451,22 @@ streamlit run app.py
 **¡Listo para usar en http://localhost:8501! 🎉**
 
 ---
+
+## 🆕 v2.0 - Actualización Reciente
+
+### ✨ Novedades
+- 🛠️ **Scripts de instalación automática**: `fix_and_start.bat` detecta y repara problemas
+- 🚀 **Gestión mejorada de puertos**: Uso de puerto 8502 para evitar conflictos
+- 🔧 **Diagnóstico de Python**: Detección automática de múltiples versiones
+- 📦 **Instalación robusta**: Uso de `python -m pip` para evitar launchers corruptos
+- 🐛 **Fix de sintaxis**: Corregidos errores en generación de reportes
+
+### 🔄 Quick Start Mejorado
+```bash
+# Ejecutar script automático de reparación e inicio
+fix_and_start.bat
+
+# Panel disponible en http://localhost:8502
+```
 
 *Última actualización: 21 noviembre de 2025*
