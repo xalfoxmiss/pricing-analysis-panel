@@ -375,8 +375,8 @@ def main():
                         # ---------------------------------------------------------
 
                         # Vista previa del informe
-                        with st.expander("👁️ Vista previa del informe HTML"):
-                            st.components.v1.html(html_report, height=600, scrolling=True)
+                        with st.expander("👁️ Vista previa del informe HTML", expanded=True):
+                            st.components.v1.html(html_report, height=1000, scrolling=True)
 
                     except Exception as e:
                         st.error(f"❌ Error en el procesamiento: {str(e)}")
