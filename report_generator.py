@@ -135,7 +135,7 @@ class ReportGenerator:
 <body>
     <!-- Header -->
     <div class="header-section">
-        <div class="container">
+        <div class="container-fluid px-4">
             <h1 class="display-4 fw-bold">
                 <i class="fas fa-chart-line me-3"></i>
                 Informe de Competitividad de Precios
@@ -152,7 +152,7 @@ class ReportGenerator:
         </div>
     </div>
 
-    <div class="container">
+    <div class="container-fluid px-4">
         <!-- Resumen Ejecutivo -->
         <div class="alert alert-info alert-custom">
             <h5><i class="fas fa-lightbulb me-2"></i>Resumen Ejecutivo</h5>
