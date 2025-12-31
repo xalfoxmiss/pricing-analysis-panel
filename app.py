@@ -348,10 +348,31 @@ def main():
                         </div>
                         """, unsafe_allow_html=True)
 
-                        # Botón de descarga
+                        # Botón de descarga informe HTML
                         b64 = base64.b64encode(html_report.encode()).decode()
                         href = f'<a href="data:file/html;base64,{b64}" download="{filename}">📥 DESCARGAR INFORME HTML</a>'
                         st.markdown(href, unsafe_allow_html=True)
+
+                        # ---------------------------------------------------------
+                        # NUEVO: Generación de CSV para registro
+                        # ---------------------------------------------------------
+                        st.markdown("### 💾 Exportar Datos (CSV)")
+                        
+                        # Añadir fecha de reporte para histórico
+                        enriched_data['report_date'] = datetime.now().strftime("%Y-%m-%d")
+                        
+                        # Generar CSV
+                        csv_data = enriched_data.to_csv(index=False).encode('utf-8')
+                        csv_filename = f"registro_precios_{timestamp}.csv"
+                        
+                        st.download_button(
+                            label="📥 DESCARGAR CSV DE REGISTRO",
+                            data=csv_data,
+                            file_name=csv_filename,
+                            mime='text/csv',
+                            help="Descarga el dataset completo con fecha para histórico"
+                        )
+                        # ---------------------------------------------------------
 
                         # Vista previa del informe
                         with st.expander("👁️ Vista previa del informe HTML"):
